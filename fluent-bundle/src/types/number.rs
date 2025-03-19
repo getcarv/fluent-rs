@@ -1,24 +1,35 @@
 use std::borrow::Cow;
-use std::convert::TryInto;
 use std::default::Default;
 use std::str::FromStr;
 
-use intl_pluralrules::operands::PluralOperands;
+use icu_plurals::PluralOperands;
 
 use crate::args::FluentArgs;
 use crate::types::FluentValue;
 
-#[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
+#[derive(Debug, Default, Copy, Clone, Hash, PartialEq, Eq)]
+pub enum FluentNumberType {
+    #[default]
+    Cardinal,
+    Ordinal,
+}
+
+impl From<&str> for FluentNumberType {
+    fn from(input: &str) -> Self {
+        match input {
+            "cardinal" => Self::Cardinal,
+            "ordinal" => Self::Ordinal,
+            _ => Self::default(),
+        }
+    }
+}
+
+#[derive(Debug, Copy, Clone, Default, Hash, PartialEq, Eq)]
 pub enum FluentNumberStyle {
+    #[default]
     Decimal,
     Currency,
     Percent,
-}
-
-impl std::default::Default for FluentNumberStyle {
-    fn default() -> Self {
-        Self::Decimal
-    }
 }
 
 impl From<&str> for FluentNumberStyle {
@@ -32,17 +43,12 @@ impl From<&str> for FluentNumberStyle {
     }
 }
 
-#[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone, Default, Hash, PartialEq, Eq)]
 pub enum FluentNumberCurrencyDisplayStyle {
+    #[default]
     Symbol,
     Code,
     Name,
-}
-
-impl std::default::Default for FluentNumberCurrencyDisplayStyle {
-    fn default() -> Self {
-        Self::Symbol
-    }
 }
 
 impl From<&str> for FluentNumberCurrencyDisplayStyle {
@@ -58,6 +64,7 @@ impl From<&str> for FluentNumberCurrencyDisplayStyle {
 
 #[derive(Debug, Clone, Hash, PartialEq, Eq)]
 pub struct FluentNumberOptions {
+    pub r#type: FluentNumberType,
     pub style: FluentNumberStyle,
     pub currency: Option<String>,
     pub currency_display: FluentNumberCurrencyDisplayStyle,
@@ -72,6 +79,7 @@ pub struct FluentNumberOptions {
 impl Default for FluentNumberOptions {
     fn default() -> Self {
         Self {
+            r#type: Default::default(),
             style: Default::default(),
             currency: None,
             currency_display: Default::default(),
@@ -89,6 +97,9 @@ impl FluentNumberOptions {
     pub fn merge(&mut self, opts: &FluentArgs) {
         for (key, value) in opts.iter() {
             match (key, value) {
+                ("type", FluentValue::String(n)) => {
+                    self.r#type = n.as_ref().into();
+                }
                 ("style", FluentValue::String(n)) => {
                     self.style = n.as_ref().into();
                 }
@@ -219,18 +230,12 @@ macro_rules! from_num {
 
 impl From<&FluentNumber> for PluralOperands {
     fn from(input: &FluentNumber) -> Self {
-        let mut operands: Self = input
-            .value
-            .try_into()
-            .expect("Failed to generate operands out of FluentNumber");
+        use fixed_decimal::{FixedDecimal, FloatPrecision};
+        let mut fd = FixedDecimal::try_from_f64(input.value, FloatPrecision::Floating).unwrap();
         if let Some(mfd) = input.options.minimum_fraction_digits {
-            if mfd > operands.v {
-                operands.f *= 10_u64.pow(mfd as u32 - operands.v as u32);
-                operands.v = mfd;
-            }
+            fd.pad_end(-(mfd as i16));
         }
-        // XXX: Add support for other options.
-        operands
+        (&fd).into()
     }
 }
 
@@ -247,6 +252,6 @@ mod tests {
         let x = 1i16;
         let y = &x;
         let z: FluentValue = y.into();
-        assert_eq!(z, FluentValue::try_number(1));
+        assert_eq!(z, FluentValue::try_number("1"));
     }
 }

@@ -1,5 +1,5 @@
+use icu_locid::LanguageIdentifier;
 use intl_memoizer::{IntlMemoizer, Memoizable};
-use unic_langid::LanguageIdentifier;
 
 #[derive(Clone, Hash, PartialEq, Eq)]
 struct NumberFormatOptions {
@@ -64,7 +64,7 @@ fn main() {
 
     {
         // Here, we will construct a new lang memoizer
-        let lang_memoizer = memoizer.get_for_lang(lang.clone());
+        let lang_memoizer = memoizer.get_for_lang(lang);
         let options = NumberFormatOptions {
             minimum_fraction_digits: 3,
             maximum_fraction_digits: 5,

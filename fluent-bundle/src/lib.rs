@@ -3,7 +3,7 @@
 //! `fluent-bundle` is a mid-level component of the [Fluent Localization
 //! System](https://www.projectfluent.org).
 //!
-//! The crate builds on top of the low level [`fluent-syntax`](../fluent-syntax) package, and provides
+//! The crate builds on top of the low level [`fluent-syntax`](https://crates.io/crates/fluent-syntax) package, and provides
 //! foundational types and structures required for executing localization at runtime.
 //!
 //! There are four core concepts to understand Fluent runtime:
@@ -18,7 +18,7 @@
 //! ```
 //! use fluent_bundle::{FluentBundle, FluentValue, FluentResource, FluentArgs};
 //! // Used to provide a locale for the bundle.
-//! use unic_langid::langid;
+//! use icu_locid::langid;
 //!
 //! // 1. Crate a FluentResource
 //!
@@ -99,8 +99,10 @@
 //! the `fluent-bundle` crate directly, while the ecosystem
 //! matures and higher level APIs are being developed.
 mod args;
+pub mod builtins;
 pub mod bundle;
-mod concurrent;
+#[cfg(feature = "sync")]
+pub mod concurrent;
 mod entry;
 mod errors;
 #[doc(hidden)]
@@ -117,8 +119,8 @@ pub use args::FluentArgs;
 ///
 /// This is the basic variant of the [`FluentBundle`](crate::bundle::FluentBundle).
 ///
-/// The concurrent specialization, can be constructed with
-/// [`FluentBundle::new_concurrent`](crate::bundle::FluentBundle::new_concurrent).
+/// The concurrent specialization can be constructed with
+/// [`FluentBundle::new_concurrent`](crate::concurrent::FluentBundle::new_concurrent).
 pub type FluentBundle<R> = bundle::FluentBundle<R, intl_memoizer::IntlLangMemoizer>;
 pub use errors::FluentError;
 pub use message::{FluentAttribute, FluentMessage};

@@ -4,7 +4,7 @@ use fluent_bundle::FluentArgs;
 use fluent_bundle::FluentBundle;
 use fluent_bundle::FluentResource;
 use fluent_bundle::FluentValue;
-use unic_langid::langid;
+use icu_locid::langid;
 
 #[test]
 fn fluent_custom_type() {
@@ -26,6 +26,8 @@ fn fluent_custom_type() {
         fn as_string(&self, _: &intl_memoizer::IntlLangMemoizer) -> std::borrow::Cow<'static, str> {
             format!("{}", self.epoch).into()
         }
+
+        #[cfg(feature = "sync")]
         fn as_string_threadsafe(
             &self,
             _: &intl_memoizer::concurrent::IntlLangMemoizer,
@@ -40,26 +42,21 @@ fn fluent_custom_type() {
 
     let sv = FluentValue::from("foo");
 
-    assert_eq!(dt == dt2, true);
-    assert_eq!(dt == dt3, false);
-    assert_eq!(dt == sv, false);
+    assert!(dt == dt2);
+    assert!(dt != dt3);
+    assert!(dt != sv);
 }
 
 #[test]
 fn fluent_date_time_builtin() {
-    #[derive(Debug, PartialEq, Clone)]
+    #[derive(Debug, Default, PartialEq, Clone)]
     enum DateTimeStyleValue {
         Full,
         Long,
         Medium,
         Short,
+        #[default]
         None,
-    }
-
-    impl std::default::Default for DateTimeStyleValue {
-        fn default() -> Self {
-            Self::None
-        }
     }
 
     impl<'l> From<&FluentValue<'l>> for DateTimeStyleValue {
@@ -123,6 +120,8 @@ fn fluent_date_time_builtin() {
         fn as_string(&self, _: &intl_memoizer::IntlLangMemoizer) -> std::borrow::Cow<'static, str> {
             format!("2020-01-20 {}:00", self.epoch).into()
         }
+
+        #[cfg(feature = "sync")]
         fn as_string_threadsafe(
             &self,
             _intls: &intl_memoizer::concurrent::IntlLangMemoizer,
@@ -146,7 +145,7 @@ key-ref = Hello { DATETIME($date, dateStyle: "full") } World
     bundle.set_use_isolating(false);
 
     bundle
-        .add_function("DATETIME", |positional, named| match positional.get(0) {
+        .add_function("DATETIME", |positional, named| match positional.first() {
             Some(FluentValue::Custom(custom)) => {
                 if let Some(that) = custom.as_ref().as_any().downcast_ref::<DateTime>() {
                     let mut dt = that.clone();
@@ -202,7 +201,7 @@ key-num-explicit = Hello { NUMBER(5, minimumFractionDigits: 2) } World
     bundle.set_use_isolating(false);
 
     bundle
-        .add_function("NUMBER", |positional, named| match positional.get(0) {
+        .add_function("NUMBER", |positional, named| match positional.first() {
             Some(FluentValue::Number(n)) => {
                 let mut num = n.clone();
                 num.options.merge(named);

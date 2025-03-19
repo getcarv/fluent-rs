@@ -5,15 +5,15 @@ framework designed to unleash the entire expressive power of natural language
 translations.
 
 [![crates.io](https://img.shields.io/crates/v/fluent-pseudo.svg)](https://crates.io/crates/fluent-pseudo)
-[![Build and test](https://github.com/projectfluent/fluent-rs/workflows/Build%20and%20test/badge.svg)](https://github.com/projectfluent/fluent-rs/actions?query=branch%3Amaster+workflow%3A%22Build+and+test%22)
-[![Coverage Status](https://coveralls.io/repos/github/projectfluent/fluent-rs/badge.svg?branch=master)](https://coveralls.io/github/projectfluent/fluent-rs?branch=master)
+[![Build](https://github.com/projectfluent/fluent-rs/actions/workflows/test.yaml/badge.svg)](https://github.com/projectfluent/fluent-rs/actions/workflows/test.yaml)
+[![Coverage Status](https://coveralls.io/repos/github/projectfluent/fluent-rs/badge.svg?branch=main)](https://coveralls.io/github/projectfluent/fluent-rs?branch=main)
 
 Usage
 -----
 
 ```rust
 use fluent_bundle::{FluentBundle, FluentResource};
-use unic_langid::langid;
+use icu_locid::langid;
 use fluent_pseudo::transform;
 
 fn transform_wrapper(s: &str) -> Cow<str> {

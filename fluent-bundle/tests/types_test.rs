@@ -6,8 +6,8 @@ use fluent_bundle::FluentArgs;
 use fluent_bundle::FluentBundle;
 use fluent_bundle::FluentResource;
 use fluent_bundle::FluentValue;
-use intl_pluralrules::operands::PluralOperands;
-use unic_langid::langid;
+use icu_locid::langid;
+use icu_plurals::PluralOperands;
 
 #[test]
 fn fluent_value_try_number() {
@@ -17,10 +17,10 @@ fn fluent_value_try_number() {
 
 #[test]
 fn fluent_value_matches() {
-    // We'll use `ars` locale since it happens to have all
+    // We'll use `ar` locale since it happens to have all
     // plural rules categories.
-    let langid_ars = langid!("ars");
-    let bundle: FluentBundle<FluentResource> = FluentBundle::new(vec![langid_ars]);
+    let langid_ar = langid!("ar");
+    let bundle: FluentBundle<FluentResource> = FluentBundle::new(vec![langid_ar]);
     let scope = Scope::new(&bundle, None, None);
 
     let string_val = FluentValue::from("string1");
@@ -31,15 +31,15 @@ fn fluent_value_matches() {
     let number_val_copy = FluentValue::from(-23.5);
     let number_val2 = FluentValue::from(23.5);
 
-    assert_eq!(string_val.matches(&string_val_copy, &scope), true);
-    assert_eq!(string_val.matches(&string_val2, &scope), false);
+    assert!(string_val.matches(&string_val_copy, &scope));
+    assert!(!string_val.matches(&string_val2, &scope));
 
-    assert_eq!(number_val.matches(&number_val_copy, &scope), true);
-    assert_eq!(number_val.matches(&number_val2, &scope), false);
+    assert!(number_val.matches(&number_val_copy, &scope));
+    assert!(!number_val.matches(&number_val2, &scope));
 
-    assert_eq!(string_val2.matches(&number_val2, &scope), false);
+    assert!(!string_val2.matches(&number_val2, &scope));
 
-    assert_eq!(string_val2.matches(&number_val2, &scope), false);
+    assert!(!string_val2.matches(&number_val2, &scope));
 
     let string_cat_zero = FluentValue::from("zero");
     let string_cat_one = FluentValue::from("one");
@@ -55,15 +55,15 @@ fn fluent_value_matches() {
     let number_cat_many = 11.into();
     let number_cat_other = 101.into();
 
-    assert_eq!(string_cat_zero.matches(&number_cat_zero, &scope), true);
-    assert_eq!(string_cat_one.matches(&number_cat_one, &scope), true);
-    assert_eq!(string_cat_two.matches(&number_cat_two, &scope), true);
-    assert_eq!(string_cat_few.matches(&number_cat_few, &scope), true);
-    assert_eq!(string_cat_many.matches(&number_cat_many, &scope), true);
-    assert_eq!(string_cat_other.matches(&number_cat_other, &scope), true);
-    assert_eq!(string_cat_other.matches(&number_cat_one, &scope), false);
+    assert!(string_cat_zero.matches(&number_cat_zero, &scope));
+    assert!(string_cat_one.matches(&number_cat_one, &scope));
+    assert!(string_cat_two.matches(&number_cat_two, &scope));
+    assert!(string_cat_few.matches(&number_cat_few, &scope));
+    assert!(string_cat_many.matches(&number_cat_many, &scope));
+    assert!(string_cat_other.matches(&number_cat_other, &scope));
+    assert!(!string_cat_other.matches(&number_cat_one, &scope));
 
-    assert_eq!(string_val2.matches(&number_cat_one, &scope), false);
+    assert!(!string_val2.matches(&number_cat_one, &scope));
 }
 
 #[test]
@@ -120,7 +120,7 @@ fn fluent_number_style() {
     assert_eq!(fno.style, FluentNumberStyle::Currency);
     assert_eq!(fno.currency, Some("EUR".to_string()));
     assert_eq!(fno.currency_display, FluentNumberCurrencyDisplayStyle::Code);
-    assert_eq!(fno.use_grouping, false);
+    assert!(!fno.use_grouping);
 
     let num = FluentNumber::new(0.2, FluentNumberOptions::default());
     assert_eq!(num.as_string(), "0.2");
@@ -133,24 +133,66 @@ fn fluent_number_style() {
     let num = FluentNumber::new(0.2, opts.clone());
     assert_eq!(num.as_string(), "0.200");
 
-    let num = FluentNumber::new(2.0, opts.clone());
+    let num = FluentNumber::new(2.0, opts);
     assert_eq!(num.as_string(), "2.000");
 }
 
 #[test]
 fn fluent_number_to_operands() {
+    use icu_plurals::rules::RawPluralOperands;
+
     let num = FluentNumber::new(2.81, FluentNumberOptions::default());
     let operands: PluralOperands = (&num).into();
 
     assert_eq!(
         operands,
-        PluralOperands {
-            n: 2.81,
+        RawPluralOperands {
             i: 2,
             v: 2,
             w: 2,
             f: 81,
             t: 81,
+            c: 0,
         }
+        .into()
+    );
+}
+
+#[test]
+fn fluent_number_to_float_vs_int() {
+    // This test verifies that we coalesce f64 `1.0` to usize `1`.
+    // See `From<i&FluentNumber> for PluralOperands` for more details.
+    use icu_plurals::rules::RawPluralOperands;
+
+    let num: FluentNumber = 1.0.into();
+    let operands: PluralOperands = (&num).into();
+
+    assert_eq!(
+        operands,
+        RawPluralOperands {
+            i: 1,
+            v: 0,
+            w: 0,
+            f: 0,
+            t: 0,
+            c: 0,
+        }
+        .into()
+    );
+
+    let num: FluentNumber = 1.into();
+    let operands: PluralOperands = (&num).into();
+
+    assert_eq!(
+        operands,
+        RawPluralOperands {
+            i: 1,
+            v: 0,
+            w: 0,
+            f: 0,
+            t: 0,
+            c: 0,
+        }
+        .into()
     );
 }

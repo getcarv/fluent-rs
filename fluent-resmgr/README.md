@@ -6,8 +6,8 @@ Resource Manager provides a standalone solution for managing localization resour
 can be used by `fluent-fallback` or other higher level bindings.
 
 [![crates.io](https://img.shields.io/crates/v/fluent-resmgr.svg)](https://crates.io/crates/fluent-resmgr)
-[![Build and test](https://github.com/projectfluent/fluent-rs/workflows/Build%20and%20test/badge.svg)](https://github.com/projectfluent/fluent-rs/actions?query=branch%3Amaster+workflow%3A%22Build+and+test%22)
-[![Coverage Status](https://coveralls.io/repos/github/projectfluent/fluent-rs/badge.svg?branch=master)](https://coveralls.io/github/projectfluent/fluent-rs?branch=master)
+[![Build](https://github.com/projectfluent/fluent-rs/actions/workflows/test.yaml/badge.svg)](https://github.com/projectfluent/fluent-rs/actions/workflows/test.yaml)
+[![Coverage Status](https://coveralls.io/repos/github/projectfluent/fluent-rs/badge.svg?branch=main)](https://coveralls.io/github/projectfluent/fluent-rs?branch=main)
 
 Project Fluent keeps simple things simple and makes complex things possible.
 The syntax used for describing translations is easy to read and understand.  At
@@ -81,7 +81,7 @@ you're a tool author you may be interested in the formal [EBNF grammar][].
 Get Involved
 ------------
 
-`fluent-rs` is open-source, licensed under the Apache License, Version 2.0.  We
+`fluent-rs` is open-source, licensed under both the Apache 2.0 and MIT licenses.  We
 encourage everyone to take a look at our code and we'll listen to your
 feedback.
 
@@ -96,4 +96,4 @@ a project to contribute to, please do get in touch on the mailing list and the
 IRC channel.
 
  - Discourse: https://discourse.mozilla.org/c/fluent
- - IRC channel: [irc://irc.mozilla.org/l20n](irc://irc.mozilla.org/l20n)
+ - Matrix channel: <a href="https://chat.mozilla.org/#/room/#fluent:mozilla.org">#fluent:mozilla.org</a>

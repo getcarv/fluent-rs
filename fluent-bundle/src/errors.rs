@@ -2,7 +2,7 @@ use crate::resolver::ResolverError;
 use fluent_syntax::parser::ParserError;
 use std::error::Error;
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub enum EntryKind {
     Message,
     Term,
@@ -23,7 +23,7 @@ impl std::fmt::Display for EntryKind {
 ///
 /// It contains three main types of errors that may come up
 /// during runtime use of the fluent-bundle crate.
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub enum FluentError {
     /// An error which occurs when
     /// [`FluentBundle::add_resource`](crate::bundle::FluentBundle::add_resource)
@@ -33,7 +33,7 @@ pub enum FluentError {
     ///
     /// ```
     /// use fluent_bundle::{FluentBundle, FluentResource};
-    /// use unic_langid::langid;
+    /// use icu_locid::langid;
     ///
     /// let ftl_string = String::from("intro = Welcome, { $name }.");
     /// let res1 = FluentResource::try_new(ftl_string)

@@ -4,6 +4,20 @@
 
   - …
 
+## fluent-resmgr 0.0.7 (March 16, 2024)
+  - This is a 'safe harbor' release prior to bringing on non-Mozilla community maintainers
+  - Return a result for `ResourceManager::get_resource`
+  - Workspace: Update to Rust 2021
+  - Workspace: Add various missing documentation and fix typos and links
+  - Workspace: Cleanup meta-data using workspaces, use SPDX licenses, etc.
+  - Workspace: Apply rustfmt and clippy lint fixes
+
+## fluent-resmgr 0.0.6 (Nov 9, 2022)
+  - Update `fluent-fallback` to 0.7.0.
+
+## fluent-resmgr 0.0.5 (Dec 17, 2021)
+  - Update `fluent-fallback` to 0.6.0.
+
 ## fluent-resmgr 0.0.4 (May 6, 2020)
   - Update `fluent-bundle` to 0.12.
   - Update `unic-langid` to 0.9.
