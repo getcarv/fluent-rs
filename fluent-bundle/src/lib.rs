@@ -104,7 +104,7 @@ pub mod bundle;
 pub mod concurrent;
 mod entry;
 mod errors;
-mod icu_data_provider;
+
 #[doc(hidden)]
 pub mod memoizer;
 mod message;
@@ -123,7 +123,6 @@ pub use args::FluentArgs;
 /// [`FluentBundle::new_concurrent`](crate::concurrent::FluentBundle::new_concurrent).
 pub type FluentBundle<R> = bundle::FluentBundle<R, intl_memoizer::IntlLangMemoizer>;
 pub use errors::FluentError;
-pub use icu_data_provider::FluentIcuDataProvider;
 pub use message::{FluentAttribute, FluentMessage};
 pub use resource::FluentResource;
 #[doc(inline)]

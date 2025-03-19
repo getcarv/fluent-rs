@@ -26,7 +26,7 @@ use crate::resolver::{ResolveValue, Scope, WriteValue};
 use crate::resource::FluentResource;
 use crate::types::FluentValue;
 
-pub type IcuDataProvider = Box<dyn AnyProvider>;
+pub type IcuDataProvider = Box<dyn AnyProvider + Send + Sync>;
 
 /// A collection of localization messages for a single locale, which are meant
 /// to be used together in a single view, widget or any other UI abstraction.
