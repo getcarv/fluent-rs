@@ -1,8 +1,12 @@
 # Changelog
 
 ## Unreleased
-  - Add module `serializer`.
-  - …
+
+## fluent-syntax 0.12.0 (May 20, 2025)
+  - Add module `serializer`
+  - De-ambiguate dependencies vs. features
+  - Cleanup docs
+  - Satiate Clippy
 
 ## fluent-syntax 0.11.1 (March 16, 2024)
   - This is a 'safe harbor' release prior to bringing on non-Mozilla community maintainers

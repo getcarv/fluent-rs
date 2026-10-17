@@ -1,10 +1,10 @@
 [package]
 name = "fluent-fallback"
 description = """
-High-level abstraction model for managing localization resources
-and runtime localization lifecycle.
+A high-level implementation of a collection of locale bundles including fallback between locales for Project Fluent,
+a localization system designed to unleash the entire expressive power of natural language translations.
 """
-version = "0.7.1"
+version = "0.7.2"
 edition.workspace = true
 rust-version.workspace = true
 homepage.workspace = true
@@ -22,7 +22,7 @@ rustc-hash.workspace = true
 unic-langid.workspace = true
 async-trait = "0.1"
 chunky-vec = "0.1"
-once_cell = "1.19"
+once_cell.workspace = true
 pin-cell = "0.2"
 
 [dev-dependencies]

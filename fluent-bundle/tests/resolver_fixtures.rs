@@ -10,13 +10,13 @@ use fluent_bundle::resolver::ResolverError;
 use fluent_bundle::FluentArgs;
 use fluent_bundle::FluentError;
 use fluent_bundle::{FluentBundle, FluentResource, FluentValue};
-use rand::distributions::Alphanumeric;
-use rand::{thread_rng, Rng};
+use rand::distr::Alphanumeric;
+use rand::{rng, Rng};
 use unic_langid::LanguageIdentifier;
 
 use helpers::*;
 
-fn transform_example(s: &str) -> Cow<str> {
+fn transform_example(s: &str) -> Cow<'_, str> {
     s.replace('a', "A").into()
 }
 
@@ -72,7 +72,7 @@ impl Scope {
 }
 
 fn generate_random_hash() -> String {
-    let mut rng = thread_rng();
+    let mut rng = rng();
     let chars: String = iter::repeat(())
         .map(|()| rng.sample(Alphanumeric))
         .map(char::from)

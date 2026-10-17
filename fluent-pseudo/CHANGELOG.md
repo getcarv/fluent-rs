@@ -2,7 +2,11 @@
 
 ## Unreleased
 
-  - …
+## fluent-pseudo 0.3.3 (May 20, 2025)
+  - Eliminate unsafe block using `once_cell` instead of undefined behavior of mutable reference to mutable static
+  - Cleanup docs
+  - Satiate Clippy
+  - Bump `regex` to 1.11
 
 ## fluent-pseudo 0.3.2 (March 16, 2024)
   - This is a 'safe harbor' release prior to bringing on non-Mozilla community maintainers

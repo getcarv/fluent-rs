@@ -18,7 +18,7 @@ use crate::bundle::{FluentBundle, IcuDataProvider};
 use crate::memoizer::MemoizerKind;
 use crate::types::FluentValue;
 
-#[derive(Debug, Default, Copy, Clone, Hash, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, Default, Eq, Hash, PartialEq)]
 pub enum FluentNumberType {
     #[default]
     Cardinal,
@@ -35,7 +35,7 @@ impl From<&str> for FluentNumberType {
     }
 }
 
-#[derive(Debug, Copy, Clone, Default, Hash, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, Default, Eq, Hash, PartialEq)]
 pub enum FluentNumberStyle {
     #[default]
     Decimal,
@@ -54,7 +54,7 @@ impl From<&str> for FluentNumberStyle {
     }
 }
 
-#[derive(Debug, Copy, Clone, Default, Hash, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, Default, Eq, Hash, PartialEq)]
 pub enum FluentNumberCurrencyDisplayStyle {
     #[default]
     Symbol,
@@ -73,21 +73,16 @@ impl From<&str> for FluentNumberCurrencyDisplayStyle {
     }
 }
 
-#[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, Default, Eq, Hash, PartialEq)]
 pub enum FluentNumberUseGrouping {
+    #[default]
     Auto,
     False,
     Always,
     Min2,
 }
 
-impl Default for FluentNumberUseGrouping {
-    fn default() -> Self {
-        Self::Auto
-    }
-}
-
-#[derive(Default, Debug, Clone, Hash, PartialEq, Eq)]
+#[derive(Clone, Debug, Default, Eq, Hash, PartialEq)]
 pub struct FluentNumberOptions {
     pub r#type: FluentNumberType,
     pub style: FluentNumberStyle,
@@ -146,7 +141,7 @@ impl FluentNumberOptions {
     }
 }
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct FluentNumber {
     pub value: f64,
     pub options: FluentNumberOptions,
@@ -215,7 +210,7 @@ impl FromStr for FluentNumber {
     }
 }
 
-impl<'l> From<FluentNumber> for FluentValue<'l> {
+impl From<FluentNumber> for FluentValue<'_> {
     fn from(input: FluentNumber) -> Self {
         FluentValue::Number(input)
     }
@@ -333,7 +328,7 @@ impl Memoizable for NumberFormatter {
 }
 
 fn to_icu_lang_id(lang: LanguageIdentifier) -> Result<IcuLanguageIdentifier, ParserError> {
-    return IcuLanguageIdentifier::try_from_locale_bytes(lang.to_string().as_bytes());
+    IcuLanguageIdentifier::try_from_locale_bytes(lang.to_string().as_bytes())
 }
 
 #[cfg(test)]

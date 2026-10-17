@@ -2,7 +2,11 @@
 
 ## Unreleased
 
-  - …
+## fluent-fallback 0.7.2 (May 20, 2025)
+  - Refactor to remove unnecessary named lifetimes
+  - Cleanup docs
+  - Satiate Clippy
+  - Bump `once_cell` to 1.21
 
 ## fluent-fallback 0.7.1 (March 16, 2024)
   - This is a 'safe harbor' release prior to bringing on non-Mozilla community maintainers

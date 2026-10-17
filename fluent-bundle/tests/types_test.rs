@@ -7,8 +7,24 @@ use fluent_bundle::FluentArgs;
 use fluent_bundle::FluentBundle;
 use fluent_bundle::FluentResource;
 use fluent_bundle::FluentValue;
+use icu_decimal::provider::DecimalSymbolsV1Marker;
+use icu_provider::prelude::*;
 use intl_pluralrules::operands::PluralOperands;
 use unic_langid::langid;
+
+struct TestDecimalProvider;
+
+impl AnyProvider for TestDecimalProvider {
+    fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
+        if key == DecimalSymbolsV1Marker::KEY {
+            let response: DataResponse<DecimalSymbolsV1Marker> =
+                icu_decimal::provider::Baked.load(req)?;
+            Ok(response.wrap_into_any_response())
+        } else {
+            Err(DataErrorKind::MissingDataKey.with_req(key, req))
+        }
+    }
+}
 
 #[test]
 fn fluent_value_try_number() {
@@ -176,21 +192,32 @@ fn fluent_number_to_operands() {
 
 #[test]
 fn fluent_number_grouping() {
-    let langid_ars = langid!("ccp");
-    let mut bundle: FluentBundle<FluentResource> = FluentBundle::new(vec![langid_ars]);
-    bundle.set_icu_data_provider(Box::new(fluent_bundle::FluentIcuDataProvider));
+    for (locale, grouped, ungrouped, grouped_small, auto_small) in [
+        ("en-US", "12,345.6", "12345.6", "1,234", "1,234"),
+        ("de-DE", "12.345,6", "12345,6", "1.234", "1.234"),
+        ("es-ES", "12.345,6", "12345,6", "1234", "1234"),
+    ] {
+        let mut bundle: FluentBundle<FluentResource> =
+            FluentBundle::new(vec![locale.parse().unwrap()]);
+        bundle.set_icu_data_provider(Box::new(TestDecimalProvider));
+        let mut number = FluentNumber::from(12345.6);
+        assert_eq!(number.as_string(&bundle), grouped, "{locale}: auto");
 
-    let mut number = FluentNumber::from(1234567890.1234567);
+        number.options.use_grouping = FluentNumberUseGrouping::False;
+        assert_eq!(number.as_string(&bundle), ungrouped, "{locale}: false");
 
-    number.options.use_grouping = FluentNumberUseGrouping::False;
-    let no_grouping = number.as_string(&bundle);
-    assert_eq!(no_grouping, "𑄷𑄸𑄹𑄺𑄻𑄼𑄽𑄾𑄿𑄶.𑄷𑄸𑄹𑄺𑄻𑄼𑄽");
+        number.options.use_grouping = FluentNumberUseGrouping::Min2;
+        assert_eq!(number.as_string(&bundle), grouped, "{locale}: min2, large");
+        number.value = 1234.0;
+        assert_eq!(number.as_string(&bundle), "1234", "{locale}: min2, small");
 
-    number.options.use_grouping = FluentNumberUseGrouping::Min2;
-    let long = number.as_string(&bundle);
-    assert_eq!(long, "𑄷,𑄸𑄹,𑄺𑄻,𑄼𑄽,𑄾𑄿𑄶.𑄷𑄸𑄹𑄺𑄻𑄼𑄽");
-
-    number.value = -1234.0;
-    let short = number.as_string(&bundle);
-    assert_eq!(short, "-𑄷𑄸𑄹𑄺");
+        number.options.use_grouping = FluentNumberUseGrouping::Always;
+        assert_eq!(number.as_string(&bundle), grouped_small, "{locale}: always");
+        number.options.use_grouping = FluentNumberUseGrouping::Auto;
+        assert_eq!(
+            number.as_string(&bundle),
+            auto_small,
+            "{locale}: auto, small"
+        );
+    }
 }

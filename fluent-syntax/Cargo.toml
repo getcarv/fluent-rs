@@ -1,9 +1,10 @@
 [package]
 name = "fluent-syntax"
 description = """
-Parser/Serializer tools for Fluent Syntax.
+A low-level parser, AST, and serializer API for the syntax used by Project Fluent,
+a localization system designed to unleash the entire expressive power of natural language translations.
 """
-version = "0.11.1"
+version = "0.12.0"
 edition.workspace = true
 rust-version = "1.64.0"
 homepage.workspace = true
@@ -19,7 +20,7 @@ include = [
   "Cargo.toml",
   "README.md",
   "LICENSE-APACHE",
-  "LICENSE-MIT"
+  "LICENSE-MIT",
 ]
 
 [dependencies]
@@ -37,7 +38,8 @@ glob = "0.3"
 
 [features]
 default = []
-json = ["serde", "serde_json"]
+serde = ["dep:serde"]
+json = ["serde", "dep:serde_json"]
 all-benchmarks = []
 
 [[bench]]

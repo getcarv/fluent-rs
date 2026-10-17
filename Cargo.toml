@@ -11,9 +11,7 @@ members = [
   "intl-memoizer",
 ]
 
-exclude = [
-  "fluent-cli",
-]
+exclude = ["fluent-cli"]
 
 [workspace.package]
 homepage = "https://www.projectfluent.org"
@@ -35,12 +33,13 @@ criterion = "0.5"
 fluent-langneg = "0.13"
 futures = "0.3"
 iai = "0.1"
-intl_pluralrules = "7.0.1"
-rustc-hash = "1"
+intl_pluralrules = "7.0"
+once_cell = "1.21"
+rustc-hash = "2.1"
 serde = "1.0"
 serde_json = "1.0"
-thiserror = "1.0"
-tokio = "1.0"
+thiserror = "2.0"
+tokio = "1.38"
 unic-langid = "0.9"
 icu_locid = "1.4"
 icu_provider = "1.4"
@@ -48,7 +47,28 @@ icu_decimal = "1.4"
 icu = { version = "1.4", default-features = false }
 fixed_decimal = "0.5"
 
-fluent-bundle = { version = "0.15.3", path = "fluent-bundle" }
-fluent-fallback = { version = "0.7.1", path = "fluent-fallback" }
-fluent-pseudo = { version = "0.3.2", path = "fluent-pseudo" }
-fluent-syntax = { version = "0.11.1", path = "fluent-syntax" }
+fluent-bundle = { version = "0.16.0", path = "fluent-bundle" }
+fluent-fallback = { version = "0.7.2", path = "fluent-fallback" }
+fluent-pseudo = { version = "0.3.3", path = "fluent-pseudo" }
+fluent-syntax = { version = "0.12.0", path = "fluent-syntax" }
+intl-memoizer = { version = "0.5.3", path = "intl-memoizer" }
+
+[workspace.metadata.typos.default]
+locale = "en-us"
+extend-ignore-re = [
+  "(?s)(#|//|/\\*)\\s*typos: ignore start.*?\\n\\s*(#|//|/\\*)\\s*typos: ignore end",
+]
+
+[workspace.metadata.typos.default.extend-words]
+nd = "nd" # appears frequently in inline test messages
+
+[workspace.metadata.typos.files]
+ignore-hidden = false
+extend-exclude = [
+  "/.git",
+  "fluent-bundle/benches/**/*.ftl",
+  "fluent-bundle/examples/**/*.ftl",
+  "fluent-syntax/tests/fixtures/**/*.ftl",
+  "fluent-syntax/tests/fixtures/**/*.json",
+  "fluent-testing/resources/**/*.ftl",
+]

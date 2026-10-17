@@ -1,9 +1,10 @@
 [package]
 name = "fluent-testing"
 description = """
-A collection of mock scenarios for testing fluent-rs components.
+A collection of mock scenarios for testing components of Project Fluent,
+a localization system designed to unleash the entire expressive power of natural language translations.
 """
-version = "0.0.4"
+version = "0.0.5"
 edition.workspace = true
 rust-version.workspace = true
 homepage.workspace = true
@@ -19,13 +20,18 @@ include = [
   "Cargo.toml",
   "README.md",
   "LICENSE-APACHE",
-  "LICENSE-MIT"
+  "LICENSE-MIT",
 ]
 
 [dependencies]
 fluent-bundle.workspace = true
 fluent-fallback.workspace = true
-tokio = { workspace = true, optional = true, features = ["fs", "rt-multi-thread", "macros", "io-util"] }
+tokio = { workspace = true, optional = true, features = [
+  "fs",
+  "rt-multi-thread",
+  "macros",
+  "io-util",
+] }
 
 [features]
 default = ["sync"]

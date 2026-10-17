@@ -1,17 +1,26 @@
 # IntlMemoizer
 
-`intl-memoizer` is a crate designed to handle lazy-initialized references
-to intl formatters.
+[![crates.io](https://img.shields.io/crates/v/intl-memoizer.svg)](https://crates.io/crates/intl-memoizer)
+[![docs.rs](https://img.shields.io/docsrs/intl-memoizer)](https://docs.rs/intl-memoizer)
+[![Build](https://github.com/projectfluent/fluent-rs/actions/workflows/test.yaml/badge.svg)](https://github.com/projectfluent/fluent-rs/actions/workflows/test.yaml)
+[![Coverage Status](https://coveralls.io/repos/github/projectfluent/fluent-rs/badge.svg?branch=main)](https://coveralls.io/github/projectfluent/fluent-rs?branch=main)
+
+The `fluent-rs` workspace is a collection of Rust crates implementing [Project Fluent][],
+a localization system designed to unleash the entire expressive power of natural language translations.
+
+This crate is a memoizer specifically tailored for storing lazy-initialized intl formatters.
+
+[Project Fluent]: https://projectfluent.org
+
+Usage
+-----
 
 The assumption is that allocating a new formatter instance is costly, and such
 instance is read-only during its life time, with constructor being expensive, and
 `format`/`select` calls being cheap.
 
 In result it pays off to use a singleton to manage memoization of all instances of intl
-APIs such as `PluralRules`, DateTimeFormat` etc. between all `FluentBundle` instances.
-
-Usage
------
+APIs such as `PluralRules`, `DateTimeFormat` etc. between all `FluentBundle` instances.
 
 The following is a high-level example of how this works, for running examples see
 the [docs](https://docs.rs/intl-memoizer/)
@@ -38,7 +47,7 @@ let options: NumberFormatOptions {
 
 // Format pi with the options. This will lazily construct the NumberFormat.
 let pi = lang_memoizer
-    .with_try_get::<NumberFormat, _, _>((options,), |nf| nf.format(3.141592653))
+    .with_try_get::<NumberFormat, _, _>((options,), &(), |nf| nf.format(3.141592653))
     .unwrap()
 
 // The example formatter constructs a string with diagnostic information about
@@ -47,7 +56,7 @@ assert_eq!(text, "3.14159");
 
 // Running it again will use the previous formatter.
 let two = lang_memoizer
-    .with_try_get::<NumberFormat, _, _>((options,), |nf| nf.format(2.0))
+    .with_try_get::<NumberFormat, _, _>((options,), &(), |nf| nf.format(2.0))
     .unwrap()
 
 assert_eq!(text, "2.000");

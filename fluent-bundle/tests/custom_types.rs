@@ -47,7 +47,7 @@ fn fluent_custom_type() {
 
 #[test]
 fn fluent_date_time_builtin() {
-    #[derive(Debug, Default, PartialEq, Clone)]
+    #[derive(Clone, Debug, Default, PartialEq)]
     enum DateTimeStyleValue {
         Full,
         Long,
@@ -57,7 +57,7 @@ fn fluent_date_time_builtin() {
         None,
     }
 
-    impl<'l> From<&FluentValue<'l>> for DateTimeStyleValue {
+    impl From<&FluentValue<'_>> for DateTimeStyleValue {
         fn from(input: &FluentValue) -> Self {
             if let FluentValue::String(s) = input {
                 match s.as_ref() {
@@ -73,7 +73,7 @@ fn fluent_date_time_builtin() {
         }
     }
 
-    #[derive(Debug, PartialEq, Default, Clone)]
+    #[derive(Clone, Debug, Default, PartialEq)]
     struct DateTimeOptions {
         pub date_style: DateTimeStyleValue,
         pub time_style: DateTimeStyleValue,
@@ -91,7 +91,7 @@ fn fluent_date_time_builtin() {
         }
     }
 
-    impl<'l> From<&FluentArgs<'l>> for DateTimeOptions {
+    impl From<&FluentArgs<'_>> for DateTimeOptions {
         fn from(input: &FluentArgs) -> Self {
             let mut opts = Self::default();
             opts.merge(input);
@@ -99,7 +99,7 @@ fn fluent_date_time_builtin() {
         }
     }
 
-    #[derive(Debug, PartialEq, Clone)]
+    #[derive(Clone, Debug, PartialEq)]
     struct DateTime {
         epoch: usize,
         options: DateTimeOptions,

@@ -8,7 +8,7 @@
 //
 // Lastly, we'll also create a new formatter which will be memoizable.
 //
-// The type and its options are modelled after ECMA402 Intl.DateTimeFormat.
+// The type and its options are modeled after ECMA402 Intl.DateTimeFormat.
 use intl_memoizer::Memoizable;
 use unic_langid::LanguageIdentifier;
 
@@ -21,7 +21,7 @@ use fluent_bundle::{FluentArgs, FluentBundle, FluentResource, FluentValue};
 //  - timeStyle
 //
 // with an enum of allowed values.
-#[derive(Debug, Default, PartialEq, Eq, Clone, Hash)]
+#[derive(Clone, Debug, Default, Eq, Hash, PartialEq)]
 enum DateTimeStyleValue {
     Full,
     Long,
@@ -33,7 +33,7 @@ enum DateTimeStyleValue {
 
 // This is just a helper to make it easier to convert
 // a value provided to FluentArgs into an option value.
-impl<'l> From<&FluentValue<'l>> for DateTimeStyleValue {
+impl From<&FluentValue<'_>> for DateTimeStyleValue {
     fn from(input: &FluentValue) -> Self {
         if let FluentValue::String(s) = input {
             match s.as_ref() {
@@ -49,7 +49,7 @@ impl<'l> From<&FluentValue<'l>> for DateTimeStyleValue {
     }
 }
 
-#[derive(Debug, PartialEq, Eq, Default, Clone, Hash)]
+#[derive(Clone, Debug, Default, Eq, Hash, PartialEq)]
 struct DateTimeOptions {
     pub date_style: DateTimeStyleValue,
     pub time_style: DateTimeStyleValue,
@@ -73,7 +73,7 @@ impl DateTimeOptions {
     }
 }
 
-impl<'l> From<&FluentArgs<'l>> for DateTimeOptions {
+impl From<&FluentArgs<'_>> for DateTimeOptions {
     fn from(input: &FluentArgs) -> Self {
         let mut opts = Self::default();
         opts.merge(input);
@@ -84,7 +84,7 @@ impl<'l> From<&FluentArgs<'l>> for DateTimeOptions {
 // Our new custom type will store a value as an epoch number,
 // and the options.
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Clone, Debug, PartialEq)]
 struct DateTime {
     epoch: usize,
     options: DateTimeOptions,
@@ -114,8 +114,6 @@ impl FluentType for DateTime {
         format!("2020-01-20 {}:00", self.epoch).into()
     }
 }
-
-/// Formatter
 
 struct DateTimeFormatter {
     lang: LanguageIdentifier,
